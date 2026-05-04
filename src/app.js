@@ -3,22 +3,33 @@
 const express = require('express')
 const app = express()  // instance of express server
 const {connectDb} = require("./config/database")
-require("./config/database")
+require("./config/database") 
 const userModel = require("./models/user")
 
+app.use(express.json())
 
 // Post Api -- Signup 
 app.post("/signup", async (req,res)=>{
-    const userObj = {
-        firstName: "Akshay",
-        lastName: "Saini",
-        email:"try@gmail.com",
-        password:'user1234'
-    }
+    // const userObj = {
+    //     firstName: "Sachin",  
+    //     lastName: "Tendulkar",
+    //     email:"sachin@gmail.com",
+    //     password:'sachin321',
+    //     // _id: "507f1f77bcf86cd799439011" -- unique id with 24 hex character string
+    // }
     // Creating a new instance of the User model 
+    console.log(req.body)
+    const userObj = req.body
     const user = new userModel(userObj)
-    await user.save()
-
+    try {
+        await user.save()
+        res.send("Data saved successfully !")
+    }
+    catch(err){
+        // res.status(400).send("Error saving the user", err.message)
+        res.status(400).json({ error: err.message });
+    }
+     
 })
 
 
