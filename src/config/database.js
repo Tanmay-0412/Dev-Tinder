@@ -6,7 +6,7 @@ const connectDb = async()=>{
     'mongodb+srv://tanmaysawant01_db_user:root%402001@notesapp.gwiaszp.mongodb.net/devTinder'
 )}
 
-module.exports = { 
+module.exports = {  
     connectDb
 }
 
