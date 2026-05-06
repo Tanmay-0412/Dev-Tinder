@@ -94,11 +94,14 @@ app.patch("/users", async(req,res )=>{
      const data = req.body 
      try {
         // const users = await userModel.findOneAndUpdate({_id:userid}, data, {returnDocument:"after"})
-        const users = await userModel.findByIdAndUpdate(userid, data)
+        const users = await userModel.findByIdAndUpdate(userid, data, {
+            runValidators: true
+        })
         console.log(users)
         res.send("User updated successfully !") 
      }catch(err){
-        res.status(400).send("Something went wrong !")
+        res.status(400).send("Something went wrong !"+ err.message)
+        // res.status(400).json({ error: err.message });
      }
 })
 
