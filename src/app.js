@@ -5,30 +5,60 @@ const app = express()  // instance of express server
 const {connectDb} = require("./config/database")
 require("./config/database") 
 const userModel = require("./models/user")
+const {validateSignUpData, validateLoginData} = require("./utlis/validation")
+const bcrypt = require('bcrypt')
 
 app.use(express.json())
 
 // Post Api -- Signup 
 app.post("/signup", async (req,res)=>{
-    // const userObj = {
-    //     firstName: "Sachin",  
-    //     lastName: "Tendulkar",
-    //     email:"sachin@gmail.com",
-    //     password:'sachin321',
-    //     // _id: "507f1f77bcf86cd799439011" -- unique id with 24 hex character string
-    // }
-    // Creating a new instance of the User model 
-    const userObj = req.body
-    const user = new userModel(userObj)
     try {
+    //* Validation of Data
+    validateSignUpData(req)
+    const {firstName, lastName, emailId, password} = req.body
+
+    //* Encrypt the password 
+    const passwordHash = await bcrypt.hash(password,10)
+    console.log(passwordHash)
+    
+    // Creating a new instance of the User model 
+    const userObj = {firstName, lastName, emailId, password: passwordHash}
+    const user = new userModel(userObj)
+    
         await user.save()
-        res.send("Data saved successfully !")
+        res.send("User Data saved successfully !")
     }
     catch(err){
-        // res.status(400).send("Error saving the user", err.message)
-        res.status(400).json({ error: err.message });
-    }
+        res.status(400).send("Error saving the user:" + err.message)
+        // res.status(400).json({ error: err.message });
+    } 
      
+})
+
+app.post("/login", async(req,res)=>{
+    try{
+        // console.log(req.body)
+        validateLoginData(req)
+        const { emailId,password} = req.body
+
+        const user = await userModel.findOne({emailId : emailId})
+        if(!user){
+            throw new Error("User does not exists")
+        }
+        console.log(password, user.password)
+
+        //returns a boolean
+        // const isPasswordValid = bcrypt.compare("Kalpit@123", "$2b$10$DAPKQH2vVxEOhaAmYhHYkur.GmjGLT3w.cl3VXs3YA4eE8kkQgpKy")
+        const isPasswordValid = await bcrypt.compare(password, user.password)
+
+        if(isPasswordValid){
+            res.send("Login successful! ")
+        }else{
+            throw new Error("Password does not match! Try Again...")
+        }
+    }catch(err){
+        res.status(400).send("Login Failed :"+ err.message)
+    }
 })
 
 // Get user by email
@@ -89,18 +119,33 @@ app.delete("/deleteuser", async(req,res)=>{
 })
 
 // Update API - update an user in database - findByIdAndUpdate & findOneAndUpdate
-app.patch("/users", async(req,res )=>{
-     const userid = req.body._id
+app.patch("/users/:userId", async(req,res )=>{
+    const userid = req.params.userId
+    //  const userid = req.body._id
      const data = req.body 
-     try {
-        // const users = await userModel.findOneAndUpdate({_id:userid}, data, {returnDocument:"after"})
-        const users = await userModel.findByIdAndUpdate(userid, data, {
-            runValidators: true
-        })
-        console.log(users)
-        res.send("User updated successfully !") 
+
+    try{
+    const Allowed_Updates = [
+        "userId","photoUrl","about","gender","age", "skills",
+    ]
+    //Every field should be present in Allowed_Updates Array
+    const isUpateAllowed = Object.keys(data).every((k) =>
+        Allowed_Updates.includes(k)
+    )
+    if(!isUpateAllowed){
+        throw new Error("Update field not allowed")
+    }
+
+    // if(data.skills.length > 10){
+    //     throw new Error("Skills cannot be more than 10")
+    // }
+    // const users = await userModel.findOneAndUpdate({_id:userid}, data, {returnDocument:"after"})
+    const users = await userModel.findByIdAndUpdate(userid, data, {
+        runValidators: true
+    })
+    res.send("User updated successfully !") 
      }catch(err){
-        res.status(400).send("Something went wrong !"+ err.message)
+        res.status(400).send("Update Failed :"+ err.message)
         // res.status(400).json({ error: err.message });
      }
 })

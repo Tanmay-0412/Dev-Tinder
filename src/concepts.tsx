@@ -167,3 +167,12 @@ const {AdminAuth, UserAuth} = require("./middleware/auth")
 //         res.status(500).send("Something went wrong !")
 //     }
 // })
+
+//! Dummy Object for Signup
+// const userObj = {
+    //     firstName: "Sachin",  
+    //     lastName: "Tendulkar",
+    //     email:"sachin@gmail.com",
+    //     password:'sachin321',
+    //     // _id: "507f1f77bcf86cd799439011" -- unique id with 24 hex character string
+    // }
