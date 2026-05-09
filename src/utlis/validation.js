@@ -21,7 +21,7 @@ const validateLoginData = (req) =>{
     }else if( !validator.isEmail(emailId)){
         throw new Error("Email is invalid")
     }
-}
+} 
 
 module.exports = {
     validateSignUpData, 
