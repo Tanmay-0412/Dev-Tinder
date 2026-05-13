@@ -8,11 +8,12 @@
 > Profile Router
 - GET/profile/view
 - PATCH/profile/edit   
-- PATCH/profile/password
+- PATCH/profile/password  -- // Forgot password API
 
 > connectionRequest Router 
-- POST/request/send/interested/:userId
-- POST/request/send/ignored/:userId
+<!-- - POST/request/send/interested/:userId
+- POST/request/send/ignored/:userId -->
+- POST/request/send/:status/:userId               ---- status = interested / ignored
 - POST/request/review/accepted/:requestId
 - POST/request/review/rejected/:requestId
  

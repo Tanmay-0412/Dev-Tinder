@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
         required:true,
         minLength:3,
         maxLength:20, 
+        index:true,
     },
     lastName : {
         type: String,
@@ -47,7 +48,11 @@ const userSchema = new mongoose.Schema({
     
     gender : {
         type: String,
-        enum: ["male","female","other"]
+        // enum: ["male","female","other"]
+        enum : {
+            values : ["male","female","other"],
+            message : `{VALUE} is not a valid gender type`
+        }
         // Custom validator
         // validate(value) {
         //     if(!["male","female","others"].includes(value)){
@@ -70,6 +75,11 @@ const userSchema = new mongoose.Schema({
     },
     skills:{
         type: [String],
+        validate(value){
+            if(value.length >4){
+                throw new Error('Only 4 skills can be entered !')
+            }
+        }
     },
     mobileNo:{
         type:String,
