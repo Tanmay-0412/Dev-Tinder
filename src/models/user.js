@@ -88,6 +88,11 @@ const userSchema = new mongoose.Schema({
 },{
     timestamps:true
 })
+
+
+// userModel.find({firstName:"Akshay",lastName:"Saini"}) 
+userSchema.index({firstName:1,lastName:1}) 
+ 
 // schema validation helper methods 
 userSchema.methods.getJWT = async function (){
     const user = this  // referencing to the instance of the user

@@ -19,6 +19,8 @@ const connectionRequestSchema = new mongoose.Schema({
     } 
 }, {timestamp : true})
 
+connectionRequestSchema.index({fromUserId: 1, toUserId : 1})
+
 connectionRequestSchema.pre("save", function(){
     const connectionRequest = this
     // Check if the fromUserId is same as toUserId

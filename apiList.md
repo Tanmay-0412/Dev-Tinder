@@ -14,9 +14,12 @@
 <!-- - POST/request/send/interested/:userId
 - POST/request/send/ignored/:userId -->
 - POST/request/send/:status/:userId               ---- status = interested / ignored
-- POST/request/review/accepted/:requestId
-- POST/request/review/rejected/:requestId
- 
+
+> Review api request
+<!-- - POST/request/review/accepted/:requestId
+- POST/request/review/rejected/:requestId -->
+- POST/request/review/:status/:requestId
+
 > user Router
 - GET/user/connection
 - GET/user/requests/
