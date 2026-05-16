@@ -15,14 +15,14 @@
 - POST/request/send/ignored/:userId -->
 - POST/request/send/:status/:userId               ---- status = interested / ignored
 
-> Review api request
+> Review Request Api
 <!-- - POST/request/review/accepted/:requestId
 - POST/request/review/rejected/:requestId -->
 - POST/request/review/:status/:requestId
 
 > user Router
+- GET/user/requests/recieved
 - GET/user/connection
-- GET/user/requests/
 - GET/user/ feed
 //* Feed profile - Gets you the profiles of other users on platform
 
@@ -30,3 +30,6 @@
 - leftswipe - pass api (ignored) , rightswipe - like api (interested)
 - Status - ignored,  interested, accepted, rejected 
 
+
+- Thought Process - POST vs GET
+ 

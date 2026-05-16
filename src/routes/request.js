@@ -59,5 +59,46 @@ requestRouter.post('/request/send/:status/:toUserId', UserAuth, async (req,res)=
     }
 })
 
+// Review Request Api
+requestRouter.post('/request/review/:status/:requestId', UserAuth, async(req,res)=>{
+    try{
+        const loggedInUser = req.user
+        const {status ,requestId} = req.params
+        const allowedStatus = ['accepted','rejected']
+        const isAllowedStatus = allowedStatus.includes(status)
+
+        if(!isAllowedStatus){
+            res.status(400).json({message:'Status is not allowed '})
+        }
+
+        const connectionRequest = await ConnectionRequestModel.findOne({
+            _id:requestId,
+            toUserId : loggedInUser._id,
+            status : "interested"
+        })
+        // console.log(connectionRequest)
+
+        if(!connectionRequest){
+            res.status(400).json({message :'Connection request not found'})
+        }
+
+        const fromUser = await userModel.findById(connectionRequest.fromUserId)
+        // console.log(fromUser.firstName)
+
+        connectionRequest.status = status
+        const data = await connectionRequest.save()
+        res.json({message:`Connection request is ${status}`, data, displayMessage :`${loggedInUser.firstName} has ${status} request from ${fromUser.firstName}`})
+
+        // Is Akshay logged In  , allowed status, valid requestId - present in db
+        // Check if userId === toUserId in connectionrequest
+        // Depends on status - if status is interested then only user can accept or reject 
+        // Once Ignored you cant convert it to Interested 
+        // if yes fromUserId name of the User
+
+    }catch(err){
+        res.status(400).send("Error :" + err.message)
+    }
+})
+
 
 module.exports = requestRouter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
