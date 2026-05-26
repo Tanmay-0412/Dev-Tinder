@@ -56,6 +56,42 @@ userRouter.get('/user/connection', UserAuth, async(req,res)=>{
         res.status(400).json({error :err.message})
     }
 })
+// Pagination - Feature
+userRouter.get('/user/feed', UserAuth, async(req,res)=>{
+    try{
+        const loggedInUser = req.user
 
+        const page = parseInt(req.query.pageNo) || 1
+        let limit = parseInt(req.query.limit) || 10
+        limit = limit > 11 ? 10 : limit
+        const skip =  (page-1)*limit 
+
+
+        // Find all the connections that have sent and recieved
+        const connectionRequests = await ConnectionRequestModel.find({
+            $or : [
+            {toUserId : loggedInUser._id },
+            {fromUserId : loggedInUser._id}
+            ]}).select('fromUserId toUserId')
+            // .populate("fromUserId", "firstName").populate("toUserId", "firstName").sort({createdAt :-1})
+        
+        const hideUsersFromFeed = new Set() // set data structes does not accept duplicate elements
+        connectionRequests.forEach((req)=>{
+            hideUsersFromFeed.add(req.fromUserId.toString());
+            hideUsersFromFeed.add(req.toUserId.toString())
+        })
+        
+        const users = await userModel.find({
+            // both the conditions are true , nin - not in the array, ne : not equal to
+            $and : [
+            {_id : {$nin : Array.from(hideUsersFromFeed)}},
+            {_id : {$ne : loggedInUser._id}}
+        ]}).select(USER_SAFE_DATA).skip(skip).limit(limit)
+        
+        res.json({message:'Users data loaded', data: users})
+    }catch(err){
+        return res.status(400).json({message:err.message})
+    }
+})
   
 module.exports = userRouter
