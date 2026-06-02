@@ -54,7 +54,7 @@ authRouter.post("/login", async (req, res) => {
       //* Add the token to cookie and send the response back to the user
       res.cookie("token", token, { expires: new Date(Date.now() + 1 * 3600000)});
     //   console.log(new Date(Date.now() + 900000).toLocaleString());
-      res.send("Login successful! ");
+      res.json({message :"Login successful!", data : user});
     } else {
       throw new Error("Password does not match! Try Again...");
     }

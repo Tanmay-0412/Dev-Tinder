@@ -1,6 +1,7 @@
 // creating a server to listen the incoming requests from outside world,
 // With the help of Express Js
 const express = require("express");
+const cors = require('cors');
 const app = express(); // instance of express server
 const { connectDb } = require("./config/database");
 require("./config/database");
@@ -13,6 +14,10 @@ const { UserAuth } = require("./middleware/auth")
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin:"http://localhost:5173", // whitelisting the origin domain name
+  credentials :true
+}))
 
 const authRouter = require('./routes/auth')
 const profileRouter = require('./routes/profile')
