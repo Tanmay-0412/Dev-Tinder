@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
   origin:"http://localhost:5173", // whitelisting the origin domain name
-  credentials :true
+  credentials :true,
 }))
 
 const authRouter = require('./routes/auth')
