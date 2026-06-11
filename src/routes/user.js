@@ -12,7 +12,7 @@ userRouter.get('/user/requests/recieved', UserAuth, async(req,res)=>{
         const loggedInUser = req.user 
         const connectionRequest = await ConnectionRequestModel.find({toUserId : loggedInUser._id,status : 'interested' })
         // .populate("fromUserId", ["firstName", "lastName"])
-        .populate("fromUserId", "firstName lastName photoUrl age about skills")
+        .populate("fromUserId", "firstName lastName photoUrl age about skills gender")
 
         if(connectionRequest.length === 0){
             return res.status(400).json({message:'No pending requests'})
